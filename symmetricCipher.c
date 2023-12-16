@@ -4,7 +4,7 @@
  * Created Date: 12.12.2023 21:30:36
  * Author: 3urobeat
  *
- * Last Modified: 16.12.2023 18:18:23
+ * Last Modified: 16.12.2023 20:13:07
  * Modified By: 3urobeat
  */
 
@@ -175,10 +175,88 @@ void encode()
 }
 
 
+// Reads a series of spaced ints from stdin and decodes it with key to chars
+void decode()
+{
+    // Read input which is a number of ints, separated with a space (byte per byte to prevent overflow, submit to input arr on space)
+    char         input[MAX_INPUT + 1] = "";
+    unsigned int inputLength = 0;
+
+    int charBuffer = 0;
+
+    printf("Please enter your text (max %d chars as ints, spaced apart):\n", MAX_INPUT);
+
+    while (inputLength < MAX_INPUT + 1) // Read until exceeding buffer or reaching newline
+    {
+        char thisChar = (char) fgetc(stdin); // Read char from stdin
+
+        // Submit to input array on space or newline, otherwise add to charBuffer
+        if (thisChar == ' ' || thisChar == '\n') {
+            if (DEBUG) printf("Input: Appending int %d\n", charBuffer);
+
+            // Append char to input array
+            input[inputLength] = (char) charBuffer;
+            inputLength++;
+
+            // Reset buffer
+            charBuffer = 0;
+
+        } else {
+
+            // Multiply charBuffer with 10 to "make room" for the next digit
+            charBuffer *= 10;
+
+            // Add digit to charBuffer. Subtract 48 because '0' corresponds to ascii decimal 48
+            charBuffer += (int) thisChar - 48;
+        }
+
+        // Break loop on linebreak (aka submit)
+        if (thisChar == '\n') break;
+    }
+
+
+    // XOR each bit of input with key
+    char output[MAX_INPUT + 1] = "";
+    char *p = input; // Point to first byte of input
+
+    int tempInputBitsArr[ARR_SIZE];
+    int tempKeyBitsArr[ARR_SIZE];
+    int tempOutputBitsArr[ARR_SIZE];
+
+    while (*p) // Iterate through input until reaching null byte
+    {
+        if (DEBUG) printf("\n");
+
+        int index = p - input; // Specify index by calculating pointer offset (yes, I could have used a for loop but I wanted to do pointer arithmetic)
+
+        // Manual way
+        ascii_to_binary(tempInputBitsArr, (int) *p);
+        ascii_to_binary(tempKeyBitsArr,   (int) key[index]);
+
+        xor_byte(tempOutputBitsArr, tempInputBitsArr, tempKeyBitsArr);
+
+        output[index] = (char) binary_to_ascii(tempOutputBitsArr);
+
+        // Control using built-in XOR operator
+        int control = ((int) *p) ^ ((int) key[index]); // XOR using ^ operator
+
+        if (DEBUG) printf("Control: %d XOR %d = %d\n", (int) *p, (int) key[index], control);
+
+        p++;
+    }
+
+
+    // Print result
+    printf("\nResult: %s\n", output);
+}
+
+
 // Entry point
 int main()
 {
     encode();
+    printf("\n");
+    decode();
 
     // Exit with UNIX error code 0
     return 0;
