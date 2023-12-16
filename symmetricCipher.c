@@ -4,7 +4,7 @@
  * Created Date: 12.12.2023 21:30:36
  * Author: 3urobeat
  *
- * Last Modified: 16.12.2023 17:03:34
+ * Last Modified: 16.12.2023 18:18:23
  * Modified By: 3urobeat
  */
 
@@ -21,7 +21,8 @@
 #define ARR_SIZE  8    // The size of all int arrays representing one byte as bits
 #define DEBUG     0    // Logs more information. Set 0 to disable, 1 to enable.
 
-const char *key = "fwfywkoaz9djxwDWSztJ6UJozX68HV3RjrVRP3g6bgzsZ57iSWoPTcCqU7QTRcYi"; // The key to encrypt with (length must be >= input)
+// The key to encrypt with (length must be >= input)
+const char *key = "fwJYzgj@C92oR92nV4ifKGnyQcKGWqJWTna7FvM&m^YReyTg4^38GQwemT^%NiC%Dk73xW@Mqp6t%RmfkZQR%3LwrGDeYPqBjMRtMe2#TPCaU8*hGU*W!MJPk6zQ@cCF4Hfywkoaz9djxwDWSztJ6UJ7xj!8Af7jqCyySNmRqqMKyKYwX@*2BRffB*rLhdK%D*Gd%GAf%D5CW47kvz5CpNWYfHB4zQnGBsW6zrxzgar@UBPz*qQZoN!YZ5tvQ$VkvApCRA7iZ5DSk45a@*EK4yCH@tq9Gcc45KZy7Gyi9Bf@2MS#HgHR!i3qCZ5B96%Wuj2RM97TTjSPpcjh4wTM9h%9eP!Tj3YVTTsJS@!tsnXu24mzNRueYeHvfuyvo!YKjK54NbD&Qt&UxWG$8U2iUBvhwZsvwfPuqpgtiB@kM@UE5gQH^cqWGnwoCmv%eN2bFpRQtrnKiZXs%mJZqjNe6dTdo8n6Nw54qE$aDp9EZxe*XEtvs4#S7xs%933aMPobSrkv3De4yuYwSXjrBc@tM&vnbKzQGhy4&A$QKBxmQpuNiJU%Mcon9wqJgtTs@Rf!n@C8SSJVe228RLw@DdpCMfUs%dKC@UmjeSJ6NkAaDhav9!Y*$Nqgw3EXQhriBVhY@@qVi8qyQ4DSWu@zKNNHAugEPmFcABXTgSdVHQbBv!UcQhNy&K^ADTnbkvp3udt$HwTetc%KDvc2Bg4%PgLtU9q*YV6s5K9cJXr3Gksv@PctN9ZTK%kmWx3oZ9T3fFYya*CS#$W!zpFyKRGq$S*piNBozX68HV3RjrVRP3g6bgzsZ57iSWoPTcCqU7QTRcYihRA2Z!ZCPi79Un#btELWcyMjnbQKaCA@yRm&XKf!MeerUMykGnYSzfMUZXEH@4mJW9@LSD*!7MJKgsC*%o%YaM&%bnrUAv9%Jr$LcCkZUU9@Q8whV4ebk^L%BhZkZiopeToYjRCgDH%KvdBkbzfRpwsvFADXS92ptr9tQWt@Z$7D5GUNwQrzA$oz@zFSMTS*jnJ8Jyb3Uw5qQ%HGPc&E4Xn9@gy33#UEPbiM*Lz$YoKzgseFjS%k2FHTMFMQwVX3";
 
 
 // Converts a sequence of bits stored in an int array to an int (ascii character)
@@ -104,6 +105,7 @@ void ascii_to_binary(int *outArr, int inChar)
 }
 
 
+// Reads a message from stdin and encodes it with key
 void encode()
 {
     // Read input (byte per byte to prevent overflow)
@@ -112,7 +114,8 @@ void encode()
 
     printf("Please enter your text (max %d chars):\n", MAX_INPUT);
 
-    while (inputLength < MAX_INPUT + 1) { // Read until exceeding buffer or reaching newline
+    while (inputLength < MAX_INPUT + 1) // Read until exceeding buffer or reaching newline
+    {
         char thisChar = (char) fgetc(stdin); // Read char from stdin
 
         // Break loop on linebreak (aka submit)
@@ -134,7 +137,8 @@ void encode()
     int tempKeyBitsArr[ARR_SIZE];
     int tempOutputBitsArr[ARR_SIZE];
 
-    while (*p) { // Iterate through input until reaching null byte
+    while (*p) // Iterate through input until reaching null byte
+    {
         if (DEBUG) printf("\n");
 
         int index = p - input; // Specify index by calculating pointer offset (yes, I could have used a for loop but I wanted to do pointer arithmetic)
@@ -156,11 +160,10 @@ void encode()
     }
 
 
-    // Print result
-    printf("\nResult: %s\n", output);
+    // Print result as a series of ints to avoid having to deal with unprintable chars
+    printf("\nResult:\n");
 
-    // Alternative print all chars individually as ints
-    p = output;
+    p = output; // Update p to point to first byte of output
 
     while (*p)
     {
