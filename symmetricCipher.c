@@ -4,7 +4,7 @@
  * Created Date: 12.12.2023 21:30:36
  * Author: 3urobeat
  *
- * Last Modified: 16.12.2023 14:25:19
+ * Last Modified: 16.12.2023 15:46:15
  * Modified By: 3urobeat
  */
 
@@ -22,6 +22,31 @@
 #define DEBUG     1    // Logs more information. Set 0 to disable, 1 to enable.
 
 const char *key = "fwfywkoaz9djxwDWSztJ6UJozX68HV3RjrVRP3g6bgzsZ57iSWoPTcCqU7QTRcYi"; // The key to encrypt with (length must be >= input)
+
+
+// Converts a sequence of bits stored in an int array to an int (ascii character)
+int binary_to_ascii(int *inArr)
+{
+    int result = 0;
+
+    for (int i = 0; i < ARR_SIZE; i++)
+    {
+        // Calculate exponent like an idiot (pow() for plebs)
+        int exp = 1;
+        for (int j = 0; j < ARR_SIZE - i - 1; j++) exp *= 2;
+
+        // Multiply bit with exponent and add to result
+        result += *(inArr + i) * exp;
+    }
+
+    // Log result if debug
+    if (DEBUG) {
+        for (int j = 0; j < ARR_SIZE; j++) printf("%d", *(inArr + j));
+        printf(": %c (ascii %d)\n", (char) result, result);
+    }
+
+    return result;
+}
 
 
 // XORs every bit inside aArr with the corresponding bit in bArr and writes the result into outArr
@@ -120,6 +145,8 @@ int main()
         ascii_to_binary(tempKeyBitsArr,   (int) key[index]);
 
         xor_byte(tempOutputBitsArr, tempInputBitsArr, tempKeyBitsArr);
+
+        output[index] = (char) binary_to_ascii(tempOutputBitsArr);
 
         // Control using built-in XOR operator
         int control = ((int) *p) ^ ((int) key[index]); // XOR using ^ operator
