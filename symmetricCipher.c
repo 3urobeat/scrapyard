@@ -4,7 +4,7 @@
  * Created Date: 12.12.2023 21:30:36
  * Author: 3urobeat
  *
- * Last Modified: 16.12.2023 20:13:07
+ * Last Modified: 16.12.2023 23:14:34
  * Modified By: 3urobeat
  */
 
@@ -163,12 +163,9 @@ void encode()
     // Print result as a series of ints to avoid having to deal with unprintable chars
     printf("\nResult:\n");
 
-    p = output; // Update p to point to first byte of output
-
-    while (*p)
+    for (int i = 0; i < inputLength; i++) // Cannot use while(pointer) here because a inputChar == keyChar match would break the loop (as the XOR result is 0)
     {
-        printf("%d ", (int) *p);
-        p++;
+        printf("%d ", (int) output[i]);
     }
 
     printf("\n");
@@ -217,37 +214,32 @@ void decode()
 
     // XOR each bit of input with key
     char output[MAX_INPUT + 1] = "";
-    char *p = input; // Point to first byte of input
 
     int tempInputBitsArr[ARR_SIZE];
     int tempKeyBitsArr[ARR_SIZE];
     int tempOutputBitsArr[ARR_SIZE];
 
-    while (*p) // Iterate through input until reaching null byte
+    for (int i = 0; i < inputLength; i++) // Cannot use while(poiner) here because int 0 would break loop
     {
         if (DEBUG) printf("\n");
 
-        int index = p - input; // Specify index by calculating pointer offset (yes, I could have used a for loop but I wanted to do pointer arithmetic)
-
         // Manual way
-        ascii_to_binary(tempInputBitsArr, (int) *p);
-        ascii_to_binary(tempKeyBitsArr,   (int) key[index]);
+        ascii_to_binary(tempInputBitsArr, (int) input[i]);
+        ascii_to_binary(tempKeyBitsArr,   (int) key[i]);
 
         xor_byte(tempOutputBitsArr, tempInputBitsArr, tempKeyBitsArr);
 
-        output[index] = (char) binary_to_ascii(tempOutputBitsArr);
+        output[i] = (char) binary_to_ascii(tempOutputBitsArr);
 
         // Control using built-in XOR operator
-        int control = ((int) *p) ^ ((int) key[index]); // XOR using ^ operator
+        int control = ((int) input[i]) ^ ((int) key[i]); // XOR using ^ operator
 
-        if (DEBUG) printf("Control: %d XOR %d = %d\n", (int) *p, (int) key[index], control);
-
-        p++;
+        if (DEBUG) printf("Control: %d XOR %d = %d\n", (int) input[i], (int) key[i], control);
     }
 
 
     // Print result
-    printf("\nResult: %s\n", output);
+    printf("\nResult:\n%s\n", output);
 }
 
 
