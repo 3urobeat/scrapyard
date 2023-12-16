@@ -4,7 +4,7 @@
  * Created Date: 12.12.2023 21:30:36
  * Author: 3urobeat
  *
- * Last Modified: 16.12.2023 15:46:15
+ * Last Modified: 16.12.2023 17:03:34
  * Modified By: 3urobeat
  */
 
@@ -19,7 +19,7 @@
 
 #define MAX_INPUT 1023 // Max amount of chars
 #define ARR_SIZE  8    // The size of all int arrays representing one byte as bits
-#define DEBUG     1    // Logs more information. Set 0 to disable, 1 to enable.
+#define DEBUG     0    // Logs more information. Set 0 to disable, 1 to enable.
 
 const char *key = "fwfywkoaz9djxwDWSztJ6UJozX68HV3RjrVRP3g6bgzsZ57iSWoPTcCqU7QTRcYi"; // The key to encrypt with (length must be >= input)
 
@@ -104,8 +104,7 @@ void ascii_to_binary(int *outArr, int inChar)
 }
 
 
-// Entry point
-int main()
+void encode()
 {
     // Read input (byte per byte to prevent overflow)
     char         input[MAX_INPUT + 1] = "";
@@ -151,11 +150,32 @@ int main()
         // Control using built-in XOR operator
         int control = ((int) *p) ^ ((int) key[index]); // XOR using ^ operator
 
-        printf("Control: %d XOR %d = %d\n", (int) *p, (int) key[index], control);
+        if (DEBUG) printf("Control: %d XOR %d = %d\n", (int) *p, (int) key[index], control);
 
         p++;
     }
 
+
+    // Print result
+    printf("\nResult: %s\n", output);
+
+    // Alternative print all chars individually as ints
+    p = output;
+
+    while (*p)
+    {
+        printf("%d ", (int) *p);
+        p++;
+    }
+
+    printf("\n");
+}
+
+
+// Entry point
+int main()
+{
+    encode();
 
     // Exit with UNIX error code 0
     return 0;
