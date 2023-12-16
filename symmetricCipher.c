@@ -4,12 +4,12 @@
  * Created Date: 12.12.2023 21:30:36
  * Author: 3urobeat
  *
- * Last Modified: 16.12.2023 13:54:57
+ * Last Modified: 16.12.2023 14:25:19
  * Modified By: 3urobeat
  */
 
 
-// Simple implementation of a symmetric cipher using a XOR operation on every bit, like you'd do on paper.
+// Manual implementation of a symmetric cipher using a XOR operation on every bit, like you'd do on paper.
 // Please note that this file was loosely put together for practice, don't judge the code quality. Thanks.
 
 // Compile with gcc and run: gcc ./symmetricCipher.c -o symmetricCipher && ./symmetricCipher
@@ -104,7 +104,7 @@ int main()
 
     // XOR each bit of input with key
     char output[MAX_INPUT + 1] = "";
-    char *p           = input; // Point to first byte of input
+    char *p = input; // Point to first byte of input
 
     int tempInputBitsArr[ARR_SIZE];
     int tempKeyBitsArr[ARR_SIZE];
@@ -113,10 +113,18 @@ int main()
     while (*p) { // Iterate through input until reaching null byte
         if (DEBUG) printf("\n");
 
+        int index = p - input; // Specify index by calculating pointer offset (yes, I could have used a for loop but I wanted to do pointer arithmetic)
+
+        // Manual way
         ascii_to_binary(tempInputBitsArr, (int) *p);
-        ascii_to_binary(tempKeyBitsArr,   (int) key[p - input]); // Get char from key by calculating pointer offset
+        ascii_to_binary(tempKeyBitsArr,   (int) key[index]);
 
         xor_byte(tempOutputBitsArr, tempInputBitsArr, tempKeyBitsArr);
+
+        // Control using built-in XOR operator
+        int control = ((int) *p) ^ ((int) key[index]); // XOR using ^ operator
+
+        printf("Control: %d XOR %d = %d\n", (int) *p, (int) key[index], control);
 
         p++;
     }
