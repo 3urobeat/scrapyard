@@ -4,7 +4,7 @@
  * Created Date: 12.12.2023 21:30:36
  * Author: 3urobeat
  *
- * Last Modified: 16.12.2023 13:29:23
+ * Last Modified: 16.12.2023 13:33:53
  * Modified By: 3urobeat
  */
 
@@ -14,12 +14,12 @@
 // Please note that this file was loosely put together for practice, don't judge the code quality. Thanks.
 
 
-#include <stdio.h>
+#include <stdio.h> // Needed for stdin stdout stuff
 
+#define ARR_SIZE 8 // The size of all int arrays representing one byte as bits
+#define DEBUG    0 // Logs more information. Set 0 to disable, 1 to enable.
 
 const char *key = "fwfywkoaz9djxwDWSztJ6UJozX68HV3RjrVRP3g6bgzsZ57iSWoPTcCqU7QTRcYi"; // The key to encrypt with (length must be >= input)
-
-const int debug = 0; // Logs more information. Set 0 to disable, 1 to enable.
 
 
 // XORs every bit inside aArr with the corresponding bit in bArr and writes the result into outArr
@@ -33,7 +33,7 @@ void xor_byte(int *outArr, int *aArr, int *bArr)
 void ascii_to_binary(int *outArr, int inChar)
 {
     // Clear output array
-    for (int i = 0; i < 8; i++)
+    for (int i = 0; i < ARR_SIZE; i++)
     {
         outArr[i] = 0;
     }
@@ -42,7 +42,7 @@ void ascii_to_binary(int *outArr, int inChar)
     // Add bit after bit, starting from the right (= at index 7)
     int temp = inChar;
 
-    for (int i = 7; i > 0; i--)
+    for (int i = ARR_SIZE - 1; i > 0; i--)
     {
         // Set bit to 1 if the number doesn't divide perfectly (= division with remainder)
         *(outArr + i) = (int) (temp % 2 == 1);
@@ -56,9 +56,9 @@ void ascii_to_binary(int *outArr, int inChar)
 
 
     // Uncomment to see the result
-    if (debug) {
+    if (DEBUG) {
         printf("%c (ascii %d): ", (char) inChar, inChar);
-        for (int j = 0; j < 8; j++) printf("%d", *(outArr + j));
+        for (int j = 0; j < ARR_SIZE; j++) printf("%d", *(outArr + j));
         printf("\n");
     }
 }
@@ -91,9 +91,9 @@ int main()
     char output[1024] = "";
     char *p           = input; // Point to first byte of input
 
-    int tempInputBitsArr[8];
-    int tempKeyBitsArr[8];
-    int tempOutputBitsArr[8];
+    int tempInputBitsArr[ARR_SIZE];
+    int tempKeyBitsArr[ARR_SIZE];
+    int tempOutputBitsArr[ARR_SIZE];
 
     while (*p) { // Iterate through input until reaching null byte
         ascii_to_binary(tempInputBitsArr, (int) *p);
