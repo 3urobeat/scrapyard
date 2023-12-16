@@ -4,20 +4,22 @@
  * Created Date: 12.12.2023 21:30:36
  * Author: 3urobeat
  *
- * Last Modified: 16.12.2023 13:33:53
+ * Last Modified: 16.12.2023 13:54:57
  * Modified By: 3urobeat
  */
 
 
-// Compile with gcc and run: gcc ./symmetricCipher.c -o symmetricCipher && ./symmetricCipher
-
+// Simple implementation of a symmetric cipher using a XOR operation on every bit, like you'd do on paper.
 // Please note that this file was loosely put together for practice, don't judge the code quality. Thanks.
+
+// Compile with gcc and run: gcc ./symmetricCipher.c -o symmetricCipher && ./symmetricCipher
 
 
 #include <stdio.h> // Needed for stdin stdout stuff
 
-#define ARR_SIZE 8 // The size of all int arrays representing one byte as bits
-#define DEBUG    0 // Logs more information. Set 0 to disable, 1 to enable.
+#define MAX_INPUT 1023 // Max amount of chars
+#define ARR_SIZE  8    // The size of all int arrays representing one byte as bits
+#define DEBUG     1    // Logs more information. Set 0 to disable, 1 to enable.
 
 const char *key = "fwfywkoaz9djxwDWSztJ6UJozX68HV3RjrVRP3g6bgzsZ57iSWoPTcCqU7QTRcYi"; // The key to encrypt with (length must be >= input)
 
@@ -25,7 +27,20 @@ const char *key = "fwfywkoaz9djxwDWSztJ6UJozX68HV3RjrVRP3g6bgzsZ57iSWoPTcCqU7QTR
 // XORs every bit inside aArr with the corresponding bit in bArr and writes the result into outArr
 void xor_byte(int *outArr, int *aArr, int *bArr)
 {
+    for (int i = 0; i < ARR_SIZE; i++)
+    {
+        int a = *(aArr + i);
+        int b = *(bArr + i);
 
+        *(outArr + i) = (!a && b) || (a && !b); // XOR written as a logical expression
+    }
+
+    // Log result if debug
+    if (DEBUG) {
+        printf("XOR result: ");
+        for (int j = 0; j < ARR_SIZE; j++) printf("%d", *(outArr + j));
+        printf("\n");
+    }
 }
 
 
@@ -55,7 +70,7 @@ void ascii_to_binary(int *outArr, int inChar)
     }
 
 
-    // Uncomment to see the result
+    // Log result if debug
     if (DEBUG) {
         printf("%c (ascii %d): ", (char) inChar, inChar);
         for (int j = 0; j < ARR_SIZE; j++) printf("%d", *(outArr + j));
@@ -68,12 +83,12 @@ void ascii_to_binary(int *outArr, int inChar)
 int main()
 {
     // Read input (byte per byte to prevent overflow)
-    char         input[1024] = "";
+    char         input[MAX_INPUT + 1] = "";
     unsigned int inputLength = 0;
 
-    printf("Please enter your text (max 1023 chars):\n");
+    printf("Please enter your text (max %d chars):\n", MAX_INPUT);
 
-    while (inputLength < 1024) { // Read until exceeding buffer or reaching newline
+    while (inputLength < MAX_INPUT + 1) { // Read until exceeding buffer or reaching newline
         char thisChar = (char) fgetc(stdin); // Read char from stdin
 
         // Break loop on linebreak (aka submit)
@@ -88,7 +103,7 @@ int main()
 
 
     // XOR each bit of input with key
-    char output[1024] = "";
+    char output[MAX_INPUT + 1] = "";
     char *p           = input; // Point to first byte of input
 
     int tempInputBitsArr[ARR_SIZE];
@@ -96,6 +111,8 @@ int main()
     int tempOutputBitsArr[ARR_SIZE];
 
     while (*p) { // Iterate through input until reaching null byte
+        if (DEBUG) printf("\n");
+
         ascii_to_binary(tempInputBitsArr, (int) *p);
         ascii_to_binary(tempKeyBitsArr,   (int) key[p - input]); // Get char from key by calculating pointer offset
 
