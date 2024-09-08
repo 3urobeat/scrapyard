@@ -4,7 +4,7 @@
  * Created Date: 2022-04-22 19:46:18
  * Author: 3urobeat
  *
- * Last Modified: 2024-09-08 11:35:47
+ * Last Modified: 2024-09-08 18:19:27
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 - 2024 3urobeat <https://github.com/3urobeat>
@@ -91,51 +91,50 @@ module.exports.run = async () => {
                     if (!duplicates.includes(e)) duplicates.push(e);
                 }
 
-                data.sim.forEach((e, i) => {
+                for (e of data.sim) {
                     if (!similarities.some(f => e.compStr == f.compStr || e.compStr == f.compStrReversed)) similarities.push(e);
+                }
 
-                    if (data.sim.length == i + 1) resolve(); // Mark this worker as done when all similarities have been processed
-                });
+                // Mark this thread as done
+                resolve();
 
             });
         }));
-
-        // Start ready check on last iteration
-        if (i + 1 >= (data.length / 50)) {
-            await Promise.all(workerPromises);
-
-            similarities.sort((a, b) => { return b.similarityPerc - a.similarityPerc; }); // Sort similarities descending by similarity in percent
-
-            logger("info", "Finished comparing and sorting all names!", false, true);
-
-            // Print results
-            if (duplicates.length > 0) {
-                let temp = "";
-                duplicates.forEach((e) => temp += `+ ${e}\n`);
-
-                logger("", "", true);
-                logger("info", `I found ${duplicates.length} duplicate names:`);
-                logger("", temp, true);
-            } else {
-                logger("info", "No duplicate names found!\n");
-            }
-
-
-            if (similarities.length > 0) {
-                let temp = "";
-                similarities.forEach((e) => temp += `+ ${e.compStr}\n`);
-
-                logger("", "", true);
-                logger("info", `I found ${similarities.length} similar names:`);
-                logger("", temp, true);
-            } else {
-                logger("info", "No similar names found!\n");
-            }
-
-
-            let itTook = (Date.now() - startTimestamp) / 1000;
-
-            logger("info", `Done after ${itTook} seconds!\n                             Check 'output.txt' for the full log. Exiting...\n`);
-        }
     }
+
+    await Promise.all(workerPromises);
+
+    similarities.sort((a, b) => { return b.similarityPerc - a.similarityPerc; }); // Sort similarities descending by similarity in percent
+
+    logger("info", `Finished comparing and sorting all names!`);
+
+    // Print results
+    if (duplicates.length > 0) {
+        let temp = "";
+        duplicates.forEach((e) => temp += `+ ${e}\n`);
+
+        logger("", "", true);
+        logger("info", `I found ${duplicates.length} duplicate names:`);
+        logger("", temp, true);
+    } else {
+        logger("info", "No duplicate names found!\n");
+    }
+
+
+    if (similarities.length > 0) {
+        let temp = "";
+        similarities.forEach((e) => temp += `+ ${e.compStr}\n`);
+
+        logger("", "", true);
+        logger("info", `I found ${similarities.length} similar names:`);
+        logger("", temp, true);
+    } else {
+        logger("info", "No similar names found!\n");
+    }
+
+
+    let itTook = (Date.now() - startTimestamp) / 1000;
+
+    logger("info", `Done after ${itTook} seconds!\n                             Check 'output.txt' for the full log. Exiting...\n`);
+
 };

@@ -4,7 +4,7 @@
  * Created Date: 2022-04-22 19:49:04
  * Author: 3urobeat
  *
- * Last Modified: 2024-09-08 11:35:04
+ * Last Modified: 2024-09-08 18:26:18
  * Modified By: 3urobeat
  *
  * Copyright (c) 2022 - 2024 3urobeat <https://github.com/3urobeat>
@@ -54,14 +54,10 @@ for (let i = rangeStart; i < rangeEnd; i++) {
                 if (similarityPerc > config.ignoreSimilarityBelowPerc) similarities.push({ compStr: compStr, compStrReversed: compStrReversed, similarityPerc: similarityPerc });
             }
         }
-
-        // Check if done and send our result back to the parent
-        if (j + 1 == arr.length && i + 1 == rangeEnd) {
-            parentPort.postMessage({ "dup": duplicates, "sim": similarities });
-        }
-
     }
 }
+
+parentPort.postMessage({ "dup": duplicates, "sim": similarities });
 
 
 // Credit: https://sumn2u.medium.com/string-similarity-comparision-in-js-with-examples-4bae35f13968 & https://gist.github.com/sumn2u/0e0b5d9505ad096284928a987ace13fb#file-jaro-wrinker-js
